@@ -32,12 +32,28 @@ using (var scope = app.Services.CreateScope())
 
     try
     {
-        // Create database if it doesn't exist
-        if (db.Database.EnsureCreated())
-        {
-            Console.WriteLine("Database created successfully");
+        var dbConnection = db.Database.GetDbConnection();
+        dbConnection.Open();
 
-            // Seed initial data
+        using var cmd = dbConnection.CreateCommand();
+        cmd.CommandText = "SHOW TABLES LIKE 'WeatherForecasts';";
+        var result = cmd.ExecuteScalar();
+
+        if (result == null)
+        {
+            Console.WriteLine("WeatherForecasts table does not exist. Creating...");
+
+            // Create the table using EF Core
+            db.Database.ExecuteSqlRaw(@"
+            CREATE TABLE WeatherForecasts (
+                Id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                Date DATE NOT NULL,
+                TemperatureC INT NOT NULL,
+                Summary VARCHAR(100)
+            );
+        ");
+
+            // Optionally seed initial data
             db.WeatherForecasts.AddRange(
                 new WeatherForecast
                 {
@@ -53,13 +69,20 @@ using (var scope = app.Services.CreateScope())
                 }
             );
             db.SaveChanges();
-            Console.WriteLine("Initial data seeded");
+
+            Console.WriteLine("WeatherForecasts table created and data seeded.");
         }
         else
         {
-            Console.WriteLine("Database already exists");
+            Console.WriteLine("WeatherForecasts table already exists.");
         }
     }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Database initialization failed: {ex.Message}");
+        throw;
+    }
+
     catch (Exception ex)
     {
         Console.WriteLine($"Database initialization failed: {ex.Message}");
