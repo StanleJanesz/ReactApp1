@@ -83,11 +83,6 @@ using (var scope = app.Services.CreateScope())
         throw;
     }
 
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Database initialization failed: {ex.Message}");
-        throw;
-    }
 }
 
 // Configure middleware pipeline
