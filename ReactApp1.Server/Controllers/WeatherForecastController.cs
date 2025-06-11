@@ -31,7 +31,8 @@ namespace ReactApp1.Server.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting weather forecasts");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.ToString()); // Instead of just "Internal server error"
+
             }
         }
 
@@ -73,7 +74,8 @@ namespace ReactApp1.Server.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating weather forecast");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.ToString()); // Instead of just "Internal server error"
+
             }
         }
 
@@ -100,7 +102,8 @@ namespace ReactApp1.Server.Controllers
                 else
                 {
                     _logger.LogError(ex, "Concurrency error updating weather forecast");
-                    return StatusCode(500, "Internal server error");
+                    return StatusCode(500, ex.ToString()); // Instead of just "Internal server error"
+
                 }
             }
 
@@ -126,7 +129,8 @@ namespace ReactApp1.Server.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting weather forecast");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.ToString()); // Instead of just "Internal server error"
+
             }
         }
 
